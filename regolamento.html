@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iscriviti — Code League</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --nero: #0d0b14;
+      --bianco: #f5f0e8;
+      --viola: #7c3aed;
+      --viola-chiaro: #a855f7;
+      --viola-scuro: #4c1d95;
+      --giallo: #f5c300;
+      --giallo-chiaro: #ffe566;
+      --grigio: #1a1628;
+      --grigio2: #221d35;
+    }
+ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+ 
+    body {
+      background: var(--nero);
+      color: var(--bianco);
+      font-family: 'Barlow', sans-serif;
+      overflow-x: hidden;
+    }
+ 
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: .35;
+    }
+ 
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem); height: 70px;
+      background: rgba(13,11,20,.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(124,58,237,.2);
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .12em; color: var(--bianco); text-decoration: none; }
+    .nav-logo span { color: var(--giallo); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: 'Barlow Condensed', sans-serif; font-size: .9rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(245,240,232,.55); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--giallo); }
+    .nav-cta { font-family: 'Barlow Condensed', sans-serif; font-size: .85rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; background: var(--giallo); color: var(--nero); padding: .55rem 1.4rem; text-decoration: none; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); transition: background .2s, transform .15s; }
+    .nav-cta:hover { background: var(--giallo-chiaro); transform: scale(1.03); }
+ 
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: var(--bianco); transition: .3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; inset: 70px 0 0 0; background: var(--nero); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .1em; color: var(--bianco); text-decoration: none; transition: color .2s; }
+    .mobile-menu a:hover { color: var(--giallo); }
+ 
+    /* ── PAGE HEADER ── */
+    .page-header { padding: 130px clamp(1.5rem, 6vw, 5rem) 3rem; position: relative; overflow: hidden; }
+    .page-header::before {
+      content: 'ISCRIVITI'; position: absolute; font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 12vw, 9rem); letter-spacing: .06em; color: rgba(124,58,237,.05);
+      top: 50%; right: 0; transform: translateY(-50%); white-space: nowrap; pointer-events: none;
+    }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .page-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: .8rem; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--viola-chiaro); margin-bottom: .75rem; display: flex; align-items: center; gap: .8rem; }
+    .page-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--viola-chiaro); }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem, 9vw, 6rem); line-height: .95; letter-spacing: .04em; margin-bottom: 1rem; }
+    .page-subtitle { font-size: 1rem; color: rgba(245,240,232,.5); max-width: 500px; line-height: 1.8; }
+ 
+    /* ── LAYOUT PRINCIPALE ── */
+    .main-content {
+      max-width: 1200px; margin: 0 auto;
+      padding: 2rem clamp(1.5rem, 6vw, 5rem) 6rem;
+      display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem; align-items: start;
+    }
+ 
+    /* ── FORM CARD ── */
+    .form-card {
+      border: 1px solid rgba(124,58,237,.2);
+      background: var(--grigio);
+      padding: 2.5rem;
+      min-width: 0; /* evita overflow nel grid */
+    }
+ 
+    .form-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem; letter-spacing: .06em;
+      margin-bottom: 2rem; padding-bottom: 1.1rem;
+      border-bottom: 1px solid rgba(245,240,232,.07);
+    }
+ 
+    /* Riga a 2 colonne */
+    .form-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+ 
+    /* Singolo campo */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label {
+      display: block; font-family: 'Barlow Condensed', sans-serif;
+      font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(245,240,232,.35); margin-bottom: .45rem;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%; background: rgba(245,240,232,.04);
+      border: 1px solid rgba(245,240,232,.09); color: var(--bianco);
+      font-family: 'Barlow', sans-serif; font-size: .95rem;
+      padding: .8rem 1rem; outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(245,240,232,.2); }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--viola-chiaro); background: rgba(124,58,237,.05);
+    }
+    .form-group textarea { resize: vertical; min-height: 95px; }
+ 
+    /* Titolo divisore sezione */
+    .section-divider {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .7rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--viola-chiaro); margin: 2rem 0 1.1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .section-divider::after { content: ''; flex: 1; height: 1px; background: rgba(124,58,237,.2); }
+    .section-divider span {
+      color: rgba(245,240,232,.25); font-family: 'Barlow', sans-serif;
+      font-size: .72rem; font-weight: 400; letter-spacing: .04em; text-transform: none;
+    }
+ 
+    /* ── ROSTER GIOCATORI ── */
+    #players-container {
+      display: flex; flex-direction: column; gap: .6rem;
+    }
+ 
+    .player-row {
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      gap: .7rem;
+      align-items: center;
+      background: rgba(245,240,232,.02);
+      border: 1px solid rgba(245,240,232,.06);
+      padding: .65rem .9rem;
+      transition: border-color .2s;
+    }
+    .player-row:focus-within { border-color: rgba(124,58,237,.3); }
+ 
+    .player-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: .95rem; color: rgba(245,240,232,.2); text-align: center;
+    }
+ 
+    /* Il campo nome completo occupa tutta la larghezza disponibile */
+    .player-row input {
+      width: 100%; background: transparent;
+      border: none; border-bottom: 1px solid rgba(245,240,232,.09);
+      color: var(--bianco); font-family: 'Barlow', sans-serif;
+      font-size: .9rem; padding: .3rem .1rem; outline: none;
+      transition: border-color .2s;
+    }
+    .player-row input:focus { border-bottom-color: var(--viola-chiaro); }
+    .player-row input::placeholder { color: rgba(245,240,232,.18); font-size: .85rem; }
+ 
+    .btn-remove {
+      background: none; border: none;
+      color: rgba(245,240,232,.18); cursor: pointer;
+      font-size: 1rem; line-height: 1;
+      transition: color .2s; padding: 0 .2rem; flex-shrink: 0;
+    }
+    .btn-remove:hover { color: #f87171; }
+ 
+    /* Pulsante aggiungi giocatore */
+    #btn-add-player {
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+      width: 100%; margin-top: .8rem;
+      background: none;
+      border: 1px dashed rgba(124,58,237,.3);
+      color: rgba(168,85,247,.65);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .82rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      padding: .65rem 1rem; cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    #btn-add-player:hover {
+      border-color: var(--viola-chiaro);
+      color: var(--viola-chiaro);
+      background: rgba(124,58,237,.05);
+    }
+ 
+    /* Contatore giocatori */
+    .player-counter {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(245,240,232,.28); margin-top: .5rem; text-align: right;
+    }
+ 
+    /* Submit */
+    .form-submit {
+      display: block; width: 100%; margin-top: 2rem;
+      padding: 1.1rem; background: var(--giallo); color: var(--nero);
+      border: none; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      cursor: pointer; clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: background .2s, transform .15s;
+    }
+    .form-submit:hover { background: var(--giallo-chiaro); transform: translateY(-1px); }
+ 
+    .form-note {
+      font-size: .77rem; color: rgba(245,240,232,.28);
+      margin-top: .9rem; line-height: 1.6; text-align: center;
+    }
+ 
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 1.3rem; }
+ 
+    .side-card { border: 1px solid rgba(245,240,232,.07); padding: 1.6rem; }
+    .side-card-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: .7rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--viola-chiaro); margin-bottom: 1.1rem;
+    }
+ 
+    .cost-list { display: flex; flex-direction: column; gap: .65rem; }
+    .cost-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .cost-label { font-size: .9rem; color: rgba(245,240,232,.5); }
+    .cost-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: .06em; }
+    .cost-row.total { padding-top: .75rem; border-top: 1px solid rgba(245,240,232,.07); margin-top: .2rem; }
+    .cost-row.total .cost-value { font-size: 1.75rem; color: var(--giallo); }
+ 
+    .checklist { display: flex; flex-direction: column; gap: .7rem; }
+    .check-item {
+      display: flex; gap: .7rem; align-items: flex-start;
+      font-size: .88rem; color: rgba(245,240,232,.58); line-height: 1.5;
+    }
+    .check-item::before {
+      content: 'OK'; font-family: 'Barlow Condensed', sans-serif;
+      font-size: .62rem; font-weight: 700; letter-spacing: .06em;
+      color: var(--viola-chiaro); flex-shrink: 0; margin-top: .15rem;
+    }
+ 
+    .info-card {
+      background: linear-gradient(135deg, rgba(124,58,237,.1), rgba(124,58,237,.03));
+      border: 1px solid rgba(124,58,237,.22); padding: 1.6rem; text-align: center;
+    }
+    .info-card-label { font-family: 'Barlow Condensed', sans-serif; font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: rgba(245,240,232,.35); margin-bottom: .4rem; }
+    .info-card-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .06em; color: var(--viola-chiaro); }
+    .info-card-sub { font-size: .8rem; color: rgba(245,240,232,.35); margin-top: .3rem; }
+ 
+    .prize-card { border: 1px solid rgba(245,195,0,.18); padding: 1.6rem; }
+    .prize-card .side-card-title { color: var(--giallo); }
+    .prize-rows { display: flex; flex-direction: column; gap: .6rem; }
+    .prize-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .prize-label { font-size: .88rem; color: rgba(245,240,232,.5); }
+    .prize-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--giallo); }
+ 
+    /* ── FOOTER ── */
+    footer { background: #07060d; border-top: 1px solid rgba(245,240,232,.05); padding: 3rem clamp(1.5rem, 6vw, 5rem); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .1em; color: var(--bianco); }
+    .footer-logo span { color: var(--giallo); }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-family: 'Barlow Condensed', sans-serif; font-size: .78rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(245,240,232,.35); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--giallo); }
+    .footer-ig { display: flex; align-items: center; gap: .6rem; font-family: 'Barlow Condensed', sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(245,240,232,.35); text-decoration: none; transition: color .2s; }
+    .footer-ig:hover { color: var(--bianco); }
+    .footer-ig svg { width: 17px; height: 17px; fill: currentColor; }
+    .footer-copy { width: 100%; text-align: center; font-size: .72rem; color: rgba(245,240,232,.18); margin-top: 1rem; }
+ 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .main-content { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .form-card { padding: 1.5rem; }
+      footer { flex-direction: column; align-items: flex-start; }
+      .footer-links { flex-wrap: wrap; gap: 1rem; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <nav>
+    <a class="nav-logo" href="index.html">CODE <span>LEAGUE</span></a>
+    <ul class="nav-links">
+      <li><a href="regolamento.html">Regolamento</a></li>
+      <li><a href="iscriviti.html" class="active">Iscriviti</a></li>
+      <li><a href="vincitori.html">Vincitori</a></li>
+      <li><a href="index.html#contatti">Contatti</a></li>
+    </ul>
+    <a class="nav-cta" href="iscriviti.html">Iscriviti ora</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+ 
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="regolamento.html">Regolamento</a>
+    <a href="iscriviti.html">Iscriviti</a>
+    <li><a href="vincitori.html">Vincitori</a></li>
+    <a href="index.html#contatti">Contatti</a>
+  </div>
+ 
+  <header class="page-header">
+    <div class="page-header-inner">
+      <p class="page-eyebrow">Code League 2026</p>
+      <h1 class="page-title">Iscriviti<br><span style="color:var(--giallo)">alla Code League</span></h1>
+      <p class="page-subtitle">Compila il modulo con i dati della tua squadra. Solo 16 posti disponibili.</p>
+    </div>
+  </header>
+ 
+  <div class="main-content">
+ 
+    <!-- ── FORM ── -->
+    <div class="form-card">
+      <div class="form-card-title">Dati Iscrizione</div>
+ 
+      <!--
+        ============================================================
+        FORMSUBMIT — CONFIGURAZIONE EMAIL
+        ============================================================
+        Per cambiare l'indirizzo email destinatario della notifica,
+        modifica il valore nell'attributo "action" qui sotto.
+ 
+        Sostituisci "davideiacuzio005@gmail.com" con il nuovo indirizzo.
+ 
+        Esempio:
+          action="https://formsubmit.co/nuovaemail@dominio.com"
+ 
+        Nota: al primo invio FormSubmit manda una mail di verifica
+        all'indirizzo indicato. Bisogna cliccare il link per attivarlo.
+        ============================================================
+      -->
+      <form id="iscrizione-form">
+        <!-- Oggetto della mail ricevuta -->
+        <input type="hidden" name="_subject" value="NUOVA SQUADRA" />
+ 
+ 
+ 
+        <!-- Disabilita il captcha automatico di FormSubmit -->
+        <input type="hidden" name="_captcha" value="false" />
+ 
+        <!-- Honeypot anti-spam (non toccare, deve restare nascosto) -->
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+ 
+        <!-- Dati squadra -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome squadra *</label>
+            <input type="text" name="nome_squadra" placeholder="Es. FC Codemondo" required />
+          </div>
+          <div class="form-group">
+            <label>Colore maglia</label>
+            <input type="text" name="colore_maglia" placeholder="Es. Bianco / Nero" />
+          </div>
+        </div>
+ 
+        <div class="section-divider">Referente Squadra</div>
+ 
+        <!-- Nome e Cognome unificati in un unico campo — arrivano come voce sola nella mail -->
+        <div class="form-group">
+          <label>Nome e Cognome Referente *</label>
+          <input
+            type="text"
+            name="referente_nome_cognome"
+            placeholder="Es. Mario Rossi"
+            required
+          />
+        </div>
+ 
+        <div class="form-row">
+          <div class="form-group">
+            <label>Telefono *</label>
+            <input type="tel" name="telefono" placeholder="+39 333 000 0000" required />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="mario@email.com" />
+          </div>
+        </div>
+ 
+        <div class="section-divider">
+          Rosa Giocatori
+          <span>(min 5 — max 10)</span>
+        </div>
+ 
+        <!-- Contenitore righe giocatori — popolato dal JS -->
+        <div id="players-container"></div>
+ 
+        <!-- Pulsante aggiungi giocatore -->
+        <button type="button" id="btn-add-player">+ Aggiungi giocatore</button>
+        <div class="player-counter" id="player-counter">5 / 10 giocatori</div>
+ 
+        <div class="form-group" style="margin-top:1.5rem;">
+          <label>Note aggiuntive</label>
+          <textarea name="note" placeholder="Informazioni extra, richieste particolari..."></textarea>
+        </div>
+ 
+        <button type="submit" class="form-submit" id="submit-btn">Invia Iscrizione</button>
+        <p class="form-note">
+          La tua iscrizione verra confermata dopo il pagamento di 200 Euro.<br>
+          Verrai ricontattato dal referente del torneo.
+        </p>
+ 
+      </form>
+    </div>
+ 
+    <!-- ── SIDEBAR ── -->
+    <div class="sidebar">
+ 
+      <div class="info-card">
+        <div class="info-card-label">Torneo</div>
+        <div class="info-card-value">1 – 2 – 3 Maggio</div>
+        <div class="info-card-sub">Campetto di Codemondo · Reggio Emilia</div>
+      </div>
+ 
+      <div class="side-card">
+        <div class="side-card-title">Quota di iscrizione</div>
+        <div class="cost-list">
+          <div class="cost-row">
+            <span class="cost-label">Iscrizione squadra</span>
+            <span class="cost-value">200 Euro</span>
+          </div>
+          <div class="cost-row">
+            <span class="cost-label">Kit sportivo CONI</span>
+            <span class="cost-value" style="color:var(--viola-chiaro);font-size:1rem;">Incluso</span>
+          </div>
+          <div class="cost-row">
+            <span class="cost-label">Arbitro ufficiale</span>
+            <span class="cost-value" style="color:var(--viola-chiaro);font-size:1rem;">Incluso</span>
+          </div>
+          <div class="cost-row total">
+            <span class="cost-label" style="font-weight:700;color:var(--bianco)">Totale</span>
+            <span class="cost-value">200 Euro</span>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="side-card">
+        <div class="side-card-title">Cosa include</div>
+        <div class="checklist">
+          <div class="check-item">Partecipazione completa — gironi e fasi finali</div>
+          <div class="check-item">Integratore sportivo certificato CONI per ogni giocatore</div>
+          <div class="check-item">Arbitro ufficiale in ogni partita</div>
+          <div class="check-item">Accesso food e bar durante le serate</div>
+          <div class="check-item">Coppa per le squadre finaliste</div>
+          <div class="check-item">Acqua fresca gratuita per tutta la durata</div>
+        </div>
+      </div>
+ 
+      <div class="prize-card">
+        <div class="side-card-title">Montepremi</div>
+        <div class="prize-rows">
+          <div class="prize-row">
+            <span class="prize-label">1° Classificato</span>
+            <span class="prize-value">700 Euro</span>
+          </div>
+          <div class="prize-row">
+            <span class="prize-label">2° Classificato</span>
+            <span class="prize-value">300 Euro</span>
+          </div>
+          <div class="prize-row">
+            <span class="prize-label">3° Classificato</span>
+            <span class="prize-value" style="font-size:.9rem;color:rgba(245,240,232,.5)">Cena offerta</span>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+  <footer>
+    <div class="footer-logo">CODE <span>LEAGUE</span></div>
+    <ul class="footer-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="regolamento.html">Regolamento</a></li>
+      <li><a href="index.html#contatti">Contatti</a></li>
+    </ul>
+    <a class="footer-ig" href="https://www.instagram.com/code.league?igsh=MTNlM3hlbG1tZDM4ZA==" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      @code.league
+    </a>
+    <p class="footer-copy">2026 Code League — Torneo di Calcio a 5 · Codemondo, Reggio Emilia</p>
+  </footer>
+ 
+  <script>
+    // ── Hamburger menu ──
+    var ham   = document.getElementById('hamburger');
+    var mMenu = document.getElementById('mobileMenu');
+    ham.addEventListener('click', function() {
+      ham.classList.toggle('open');
+      mMenu.classList.toggle('open');
+    });
+    mMenu.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        ham.classList.remove('open');
+        mMenu.classList.remove('open');
+      });
+    });
+ 
+    // ── Roster giocatori ──
+    var MAX_PLAYERS = 10;
+    var MIN_PLAYERS = 5;
+ 
+    var container = document.getElementById('players-container');
+    var addBtn    = document.getElementById('btn-add-player');
+    var counter   = document.getElementById('player-counter');
+ 
+    function reindex() {
+      var rows = container.querySelectorAll('.player-row');
+      rows.forEach(function(row, i) {
+        row.querySelector('.player-num').textContent = i + 1;
+        row.querySelector('input').name = 'Giocatore_' + (i + 1);
+      });
+      var n = rows.length;
+      counter.textContent = n + ' / ' + MAX_PLAYERS + ' giocatori';
+      addBtn.style.display = n >= MAX_PLAYERS ? 'none' : 'flex';
+      rows.forEach(function(row, i) {
+        var btn = row.querySelector('.btn-remove');
+        if (i < MIN_PLAYERS) {
+          btn.disabled = true;
+          btn.style.opacity = '0.2';
+          btn.style.cursor  = 'not-allowed';
+        } else {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor  = 'pointer';
+        }
+      });
+    }
+ 
+    function addPlayer() {
+      var current = container.querySelectorAll('.player-row').length;
+      if (current >= MAX_PLAYERS) return;
+      var row = document.createElement('div');
+      row.className = 'player-row';
+      row.innerHTML =
+        '<div class="player-num"></div>' +
+        '<input type="text" name="Giocatore_x" placeholder="Nome e Cognome" />' +
+        '<button type="button" class="btn-remove" aria-label="Rimuovi">&#x2715;</button>';
+      row.querySelector('.btn-remove').addEventListener('click', function() {
+        row.remove();
+        reindex();
+      });
+      container.appendChild(row);
+      reindex();
+    }
+ 
+    addBtn.addEventListener('click', addPlayer);
+    for (var i = 0; i < MIN_PLAYERS; i++) addPlayer();
+ 
+    // ── Submit via fetch: manda la mail con FormSubmit e apre grazie.html ──
+    document.getElementById('iscrizione-form').addEventListener('submit', function(e) {
+      e.preventDefault(); // blocca sempre il submit nativo
+ 
+      // Validazione minimo giocatori compilati
+      var filled = 0;
+      container.querySelectorAll('input').forEach(function(inp) {
+        if (inp.value.trim() !== '') filled++;
+      });
+      if (filled < MIN_PLAYERS) {
+        alert('Inserisci almeno ' + MIN_PLAYERS + ' giocatori per procedere.');
+        return;
+      }
+ 
+      var btn = document.getElementById('submit-btn');
+      btn.textContent = 'Invio in corso...';
+      btn.disabled = true;
+ 
+      // Costruisce FormData dal form
+      var formData = new FormData(this);
+ 
+      /*
+        ============================================================
+        FORMSUBMIT — EMAIL DESTINATARIO
+        ============================================================
+        Per cambiare l'indirizzo email a cui arrivano le iscrizioni,
+        modifica l'URL qui sotto sostituendo "davideiacuzio005@gmail.com"
+        con il nuovo indirizzo.
+ 
+        Esempio:
+          'https://formsubmit.co/nuovaemail@dominio.com'
+ 
+        Al primo invio FormSubmit manda una mail di attivazione:
+        devi cliccare il link per abilitare l'endpoint.
+        ============================================================
+      */
+      fetch('https://formsubmit.co/ajax/davideiacuzio005@gmail.com', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        // Sia che FormSubmit risponda ok o con errore, apriamo grazie.html
+        window.location.href = 'grazie.html';
+      })
+      .catch(function() {
+        // Anche in caso di errore di rete apriamo grazie.html
+        // (la mail potrebbe essere comunque partita)
+        window.location.href = 'grazie.html';
+      });
+    });
+  </script>
+</body>
+</html>
