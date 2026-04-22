@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code League — Torneo di Calcio a 5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --nero: #0d0b14;
+      --bianco: #f5f0e8;
+      --viola: #7c3aed;
+      --viola-chiaro: #a855f7;
+      --viola-scuro: #4c1d95;
+      --giallo: #f5c300;
+      --giallo-chiaro: #ffe566;
+      --grigio: #1a1628;
+      --grigio2: #2a2040;
+    }
+ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--nero);
+      color: var(--bianco);
+      font-family: 'Barlow', sans-serif;
+      overflow-x: hidden;
+    }
+ 
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: .35;
+    }
+ 
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      height: 70px;
+      background: rgba(13,11,20,.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(124,58,237,.2);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: .12em;
+      color: var(--bianco);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--giallo); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .9rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(245,240,232,.55); text-decoration: none; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--giallo); }
+    .nav-cta {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .85rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      background: var(--giallo); color: var(--nero);
+      padding: .55rem 1.4rem; text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background .2s, transform .15s;
+    }
+    .nav-cta:hover { background: var(--giallo-chiaro); transform: scale(1.04); }
+ 
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: var(--bianco); transition: .3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu {
+      display: none; position: fixed; inset: 70px 0 0 0;
+      background: var(--nero); z-index: 99;
+      flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .1em;
+      color: var(--bianco); text-decoration: none; transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--giallo); }
+ 
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 100px 1.5rem 5rem;
+    }
+ 
+    /* Immagine di sfondo campetto */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://raw.githubusercontent.com/davideiacuzio/code-league/main/campetto.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    /* Overlay sfumato viola scuro sopra la foto */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(13,11,20,.75) 0%,
+        rgba(76,29,149,.5) 40%,
+        rgba(13,11,20,.85) 100%
+      );
+    }
+ 
+    /* Griglia decorativa sopra l'overlay */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(124,58,237,.06) 80px),
+        repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(124,58,237,.06) 80px);
+      pointer-events: none;
+    }
+ 
+    .hero-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(.75rem, 2vw, .9rem); font-weight: 700; letter-spacing: .28em;
+      text-transform: uppercase; color: var(--giallo);
+      margin-bottom: 1rem; position: relative;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; height: 1px; width: 40px; background: var(--giallo); opacity: .6;
+    }
+ 
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 13rem);
+      line-height: .88; letter-spacing: .04em; position: relative;
+    }
+    .hero-title .line2 {
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(245,240,232,.18);
+    }
+    .hero-title .accent { color: var(--giallo); }
+ 
+    .hero-subtitle {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(1rem, 3vw, 1.35rem); font-weight: 500;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(245,240,232,.5);
+      margin-top: 1.2rem; margin-bottom: 2.5rem; position: relative;
+    }
+ 
+    .hero-badges {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: .7rem; margin-bottom: 3rem; position: relative;
+    }
+    .badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: .45rem 1rem;
+      border: 1px solid rgba(124,58,237,.35);
+      color: rgba(245,240,232,.8);
+      background: rgba(124,58,237,.1);
+    }
+    .badge.highlight {
+      background: rgba(245,195,0,.12);
+      border-color: rgba(245,195,0,.5);
+      color: var(--giallo);
+    }
+ 
+    .hero-cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; position: relative; }
+ 
+    .btn-primary {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      background: var(--giallo); color: var(--nero);
+      padding: 1rem 2.5rem; text-decoration: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all .2s; display: inline-block;
+    }
+    .btn-primary:hover { background: var(--giallo-chiaro); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(245,195,0,.25); }
+ 
+    .btn-secondary {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      background: transparent; color: var(--bianco);
+      padding: 1rem 2.5rem; text-decoration: none;
+      border: 1px solid rgba(245,240,232,.22);
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all .2s; display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--giallo); color: var(--giallo); transform: translateY(-2px); }
+ 
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      font-family: 'Barlow Condensed', sans-serif; font-size: .7rem;
+      letter-spacing: .2em; text-transform: uppercase; color: rgba(245,240,232,.25);
+    }
+    .scroll-hint-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(245,195,0,.7), transparent);
+      animation: scroll-drop 1.8s ease-in-out infinite;
+    }
+    @keyframes scroll-drop {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+ 
+    /* ── SEZIONE GENERICA ── */
+    .section { padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem); max-width: 1200px; margin: 0 auto; }
+ 
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .78rem; font-weight: 700; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--viola-chiaro); margin-bottom: .75rem;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 5rem); line-height: 1; letter-spacing: .04em; margin-bottom: 1.5rem;
+    }
+    .section-body {
+      color: rgba(245,240,232,.55); max-width: 560px; line-height: 1.85; font-size: 1.05rem;
+    }
+ 
+    /* ── INFO CARDS ── */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+      gap: 1px; background: rgba(124,58,237,.12);
+      border: 1px solid rgba(124,58,237,.12); margin-top: 3rem;
+    }
+    .info-card {
+      background: var(--nero); padding: 2rem 1.75rem; position: relative; overflow: hidden;
+      transition: background .3s;
+    }
+    .info-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0;
+      background: var(--giallo); transition: height .35s ease;
+    }
+    .info-card:hover { background: var(--grigio); }
+    .info-card:hover::before { height: 100%; }
+ 
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: .72rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: rgba(245,240,232,.35); margin-bottom: .5rem;
+    }
+    .card-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .06em; color: var(--bianco); line-height: 1.1; }
+    .card-value.yellow { color: var(--giallo); }
+    .card-value.purple { color: var(--viola-chiaro); }
+    .card-sub { font-size: .82rem; color: rgba(245,240,232,.38); margin-top: .35rem; line-height: 1.5; }
+ 
+    /* ── PREMI ── */
+    .prizes-section { background: var(--grigio); border-top: 1px solid rgba(124,58,237,.15); border-bottom: 1px solid rgba(124,58,237,.15); }
+    .prizes-inner { max-width: 1200px; margin: 0 auto; padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem); }
+    .prizes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .prize-card {
+      border: 1px solid rgba(245,240,232,.07); padding: 2.5rem 2rem; text-align: center; position: relative;
+      transition: border-color .3s, transform .3s;
+    }
+    .prize-card:hover { border-color: rgba(245,195,0,.4); transform: translateY(-4px); }
+    .prize-card.first { border-color: rgba(245,195,0,.35); }
+    .prize-card.first::before {
+      content: 'VINCITORE'; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+      font-family: 'Barlow Condensed', sans-serif; font-size: .65rem; font-weight: 700; letter-spacing: .2em;
+      background: var(--giallo); color: var(--nero); padding: .25rem .8rem;
+    }
+    .prize-pos { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1; color: rgba(245,240,232,.08); margin-bottom: .5rem; }
+    .prize-card.first .prize-pos { color: rgba(245,195,0,.18); }
+    .prize-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: .04em; color: var(--giallo); }
+    .prize-desc { font-family: 'Barlow Condensed', sans-serif; font-size: .85rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(245,240,232,.4); margin-top: .4rem; }
+ 
+    /* ── FOOD & BAR ── */
+    .food-section { max-width: 1200px; margin: 0 auto; padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem); border-bottom: 1px solid rgba(124,58,237,.12); }
+    .food-list { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+    .food-tag {
+      font-family: 'Barlow', sans-serif; font-size: .9rem; font-weight: 600;
+      padding: .6rem 1.3rem; background: rgba(245,240,232,.03); border: 1px solid rgba(245,240,232,.1);
+      color: rgba(245,240,232,.75); transition: all .2s;
+    }
+    .food-tag:hover { background: rgba(124,58,237,.1); border-color: rgba(124,58,237,.4); color: var(--viola-chiaro); }
+    .food-note {
+      margin-top: 1.5rem; font-family: 'Barlow Condensed', sans-serif; font-size: .88rem;
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--viola-chiaro);
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .food-note::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--viola-chiaro); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+ 
+    /* ── CONTATTI (inline nella homepage) ── */
+    #contatti {
+      background: var(--grigio);
+      border-top: 1px solid rgba(124,58,237,.15);
+    }
+    .contatti-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+    }
+ 
+    .contact-info-col { display: flex; flex-direction: column; gap: 1.2rem; }
+ 
+    .contact-item {
+      border: 1px solid rgba(245,240,232,.07);
+      padding: 1.6rem; display: flex; align-items: flex-start; gap: 1.4rem;
+      transition: border-color .3s, background .3s;
+    }
+    .contact-item:hover { border-color: rgba(124,58,237,.35); background: rgba(124,58,237,.04); }
+ 
+    .contact-item-icon {
+      width: 40px; height: 40px; border: 1px solid rgba(124,58,237,.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0; color: var(--viola-chiaro);
+    }
+    .contact-item-label {
+      font-family: 'Barlow Condensed', sans-serif; font-size: .68rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: rgba(245,240,232,.3); margin-bottom: .3rem;
+    }
+    .contact-item-value { font-weight: 600; font-size: .97rem; color: var(--bianco); margin-bottom: .2rem; }
+    .contact-item-desc { font-size: .82rem; color: rgba(245,240,232,.4); line-height: 1.5; }
+ 
+    .ig-link {
+      text-decoration: none; color: inherit;
+      border-color: rgba(168,85,247,.25);
+    }
+    .ig-link:hover { border-color: rgba(168,85,247,.5) !important; }
+    .ig-link .contact-item-value { color: var(--viola-chiaro); }
+ 
+    .map-col { display: flex; flex-direction: column; gap: 1.2rem; }
+    /* ── MAPPA — nessun filtro colore, bordo viola sottile ── */
+    .map-embed {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border: 1px solid rgba(124,58,237,.3);
+      overflow: hidden;
+      border-radius: 2px;
+    }
+    .map-embed iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+ 
+    .map-btn {
+      display: flex; align-items: center; justify-content: center; gap: .75rem;
+      padding: .9rem; background: transparent;
+      border: 1px solid rgba(124,58,237,.3); color: var(--viola-chiaro);
+      font-family: 'Barlow Condensed', sans-serif; font-size: .82rem; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase; text-decoration: none; transition: all .2s;
+    }
+    .map-btn:hover { background: rgba(124,58,237,.1); border-color: var(--viola-chiaro); }
+ 
+    /* FAQ nella sezione contatti */
+    .faq-col { grid-column: 1 / -1; }
+    .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: .04em; margin-bottom: 1.5rem; }
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item { border-top: 1px solid rgba(245,240,232,.07); cursor: pointer; }
+    .faq-item:last-child { border-bottom: 1px solid rgba(245,240,232,.07); }
+    .faq-question { display: flex; justify-content: space-between; align-items: center; padding: 1.3rem 0; font-size: .97rem; font-weight: 600; color: var(--bianco); gap: 1rem; transition: color .2s; }
+    .faq-item:hover .faq-question { color: var(--giallo); }
+    .faq-icon { width: 22px; height: 22px; border: 1px solid rgba(245,240,232,.18); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; transition: transform .3s, border-color .2s; color: rgba(245,240,232,.4); }
+    .faq-item.open .faq-icon { transform: rotate(45deg); border-color: var(--giallo); color: var(--giallo); }
+    .faq-answer { font-size: .92rem; color: rgba(245,240,232,.5); line-height: 1.8; max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s ease; }
+    .faq-item.open .faq-answer { max-height: 200px; padding: 0 0 1.3rem; }
+ 
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: var(--viola);
+      padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: 'CODE LEAGUE'; position: absolute; font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 20vw, 16rem); letter-spacing: .06em; color: rgba(0,0,0,.1);
+      top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; pointer-events: none;
+    }
+    .cta-banner h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 7vw, 4.5rem); letter-spacing: .06em; color: var(--bianco); position: relative; }
+    .cta-banner h2 span { color: var(--giallo); }
+    .cta-banner p { font-size: 1.05rem; color: rgba(245,240,232,.7); margin: .8rem 0 2rem; position: relative; }
+    .btn-white {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase; background: var(--bianco); color: var(--viola-scuro);
+      padding: 1rem 2.8rem; text-decoration: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all .2s; display: inline-block; position: relative;
+    }
+    .btn-white:hover { background: var(--giallo); color: var(--nero); transform: translateY(-2px); }
+ 
+    /* ── FOOTER ── */
+    footer {
+      background: #07060d;
+      border-top: 1px solid rgba(245,240,232,.05);
+      padding: 3rem clamp(1.5rem, 6vw, 5rem);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: .1em; color: var(--bianco); }
+    .footer-logo span { color: var(--giallo); }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-family: 'Barlow Condensed', sans-serif; font-size: .78rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(245,240,232,.35); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--giallo); }
+    .footer-ig { display: flex; align-items: center; gap: .6rem; font-family: 'Barlow Condensed', sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(245,240,232,.35); text-decoration: none; transition: color .2s; }
+    .footer-ig:hover { color: var(--bianco); }
+    .footer-ig svg { width: 17px; height: 17px; fill: currentColor; }
+    .footer-copy { width: 100%; text-align: center; font-size: .73rem; color: rgba(245,240,232,.18); margin-top: 1rem; letter-spacing: .05em; }
+ 
+    /* ── SCROLL REVEAL ── */
+    [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    [data-reveal].visible { opacity: 1; transform: none; }
+ 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .hero-title { font-size: clamp(3.5rem, 18vw, 6rem); }
+    }
+    @media (max-width: 900px) {
+      .contatti-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .map-col { order: -1; }
+    }
+    @media (max-width: 600px) {
+      .prizes-grid { grid-template-columns: 1fr; max-width: 320px; margin-left: auto; margin-right: auto; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <!-- NAVBAR -->
+  <nav>
+    <a class="nav-logo" href="index.html">CODE <span>LEAGUE</span></a>
+    <ul class="nav-links">
+      <li><a href="regolamento.html">Regolamento</a></li>
+      <li><a href="iscriviti.html">Iscriviti</a></li>
+      <li><a href="vincitori.html">Vincitori</a></li>
+      <li><a href="#contatti">Contatti</a></li>
+    </ul>
+    <a class="nav-cta" href="iscriviti.html">Iscriviti ora</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+ 
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="regolamento.html">Regolamento</a>
+    <li><a href="vincitori.html">Vincitori</a></li>
+    <a href="iscriviti.html">Iscriviti</a>
+    <a href="#contatti">Contatti</a>
+  </div>
+ 
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+ 
+    <p class="hero-eyebrow">4a Edizione 2026</p>
+    <h1 class="hero-title">
+      <span>CODE</span><br>
+      <span class="line2">LEAGUE</span>
+    </h1>
+    <p class="hero-subtitle">Torneo di Calcio a 5 — 1 · 2 · 3 Maggio</p>
+ 
+    <div class="hero-badges">
+      <span class="badge">16 Squadre</span>
+      <span class="badge">18:00 - 01:00</span>
+      <span class="badge">Codemondo, Reggio Emilia</span>
+      <span class="badge highlight">1000 Euro in Palio</span>
+      <span class="badge">Premio di partecipazione</span>
+    </div>
+ 
+    <div class="hero-cta">
+      <a class="btn-primary" href="iscriviti.html">Iscriviti — 200 Euro</a>
+      <a class="btn-secondary" href="regolamento.html">Regolamento</a>
+    </div>
+ 
+    <div class="scroll-hint">
+      <div class="scroll-hint-line"></div>
+      Scopri
+    </div>
+  </section>
+ 
+  <!-- INFO TORNEO -->
+  <div style="background: var(--nero);">
+    <div class="section">
+      <p class="section-label" data-reveal>Il torneo</p>
+      <h2 class="section-title" data-reveal>Tre giorni.<br><span style="color:var(--giallo)">Una sola vetta.</span></h2>
+      <p class="section-body" data-reveal>
+        La Code League e il torneo di calcio a 5 pensato per chiunque abbia voglia di competere, divertirsi e vivere tre serate indimenticabili al campetto di Codemondo. Per sportivi e non.
+      </p>
+ 
+      <div class="info-grid" data-reveal>
+        <div class="info-card">
+          <div class="card-title">Date</div>
+          <div class="card-value">1 — 2 — 3<br>Maggio</div>
+          <div class="card-sub">Gironi il 1 e 2 · Fasi finali il 3</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Orario</div>
+          <div class="card-value yellow">18:00 — 01:00</div>
+          <div class="card-sub">Bar e cucina aperti dalle 19:00</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Squadre ammesse</div>
+          <div class="card-value">16</div>
+          <div class="card-sub">Max 10 giocatori per team</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Quota iscrizione</div>
+          <div class="card-value yellow">200 Euro</div>
+          <div class="card-sub">A squadra, tutto incluso</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Luogo</div>
+          <div class="card-value" style="font-size:1.2rem;">Via San<br>Pantaleone</div>
+          <div class="card-sub">Campetto di Codemondo</div>
+        </div>
+        <div class="info-card">
+          <div class="card-title">Regalo a ogni giocatore</div>
+          <div class="card-value purple" style="font-size:1.1rem;">Integratore<br>Sportivo</div>
+          <div class="card-sub">Certificato CONI per ogni membro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- PREMI -->
+  <div class="prizes-section">
+    <div class="prizes-inner">
+      <p class="section-label" data-reveal>Montepremi</p>
+      <h2 class="section-title" data-reveal>1.000 Euro <span style="color:var(--giallo)">in palio</span></h2>
+      <p class="section-body" data-reveal>Coppa alle finaliste e premi in denaro per le prime due classificate.</p>
+ 
+      <div class="prizes-grid" data-reveal>
+        <div class="prize-card first">
+          <div class="prize-pos">1</div>
+          <div class="prize-amount">700 Euro</div>
+          <div class="prize-desc">Primo classificato</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-pos">2</div>
+          <div class="prize-amount">300 Euro</div>
+          <div class="prize-desc">Secondo classificato</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-pos">3</div>
+          <div class="prize-amount" style="font-size:1.8rem;">Cena<br>Offerta</div>
+          <div class="prize-desc">Terzo classificato</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-pos">F</div>
+          <div class="prize-amount" style="font-size:1.6rem;">Coppa</div>
+          <div class="prize-desc">Alle squadre finaliste</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- FOOD & BAR -->
+  <div class="food-section">
+    <p class="section-label" data-reveal>Food and Bar</p>
+    <h2 class="section-title" data-reveal>Dalle 19:00 si <span style="color:var(--giallo)">mangia.</span></h2>
+    <p class="section-body" data-reveal>
+      Durante tutte le giornate del torneo il servizio cucina e bar sara aperto per tutti i presenti.
+    </p>
+    <div class="food-list" data-reveal>
+      <span class="food-tag">Panino con la salsiccia</span>
+      <span class="food-tag">Patatine fritte</span>
+      <span class="food-tag">Birra alla spina</span>
+      <span class="food-tag">Coca alla spina</span>
+      <span class="food-tag">Gelati</span>
+    </div>
+    <p class="food-note" data-reveal>Acqua fresca gratis per tutti, per tutta la durata del torneo</p>
+  </div>
+ 
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <h2>Porta la tua squadra.<br><span>Solo 16 posti.</span></h2>
+    <p>Non fartelo sfuggire.</p>
+    <a class="btn-white" href="iscriviti.html">Iscriviti ora — 200 Euro</a>
+  </div>
+ 
+  <!-- CONTATTI (sezione inline) -->
+  <section id="contatti">
+    <div class="contatti-inner">
+ 
+      <div class="contact-info-col">
+        <p class="section-label" style="margin-bottom:.5rem;" data-reveal>Contatti</p>
+        <h2 class="section-title" data-reveal style="margin-bottom:1.5rem;">Dove <span style="color:var(--giallo)">siamo</span></h2>
+ 
+        <a class="contact-item ig-link" href="https://www.instagram.com/code.league?igsh=MTNlM3hlbG1tZDM4ZA==" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;border:1px solid rgba(245,240,232,.07);padding:1.6rem;display:flex;align-items:flex-start;gap:1.4rem;transition:border-color .3s,background .3s;" data-reveal>
+          <div class="contact-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </div>
+          <div>
+            <div class="contact-item-label">Instagram ufficiale</div>
+            <div class="contact-item-value" style="color:var(--viola-chiaro);">@code.league</div>
+            <div class="contact-item-desc">News, aggiornamenti e tabellone in tempo reale.</div>
+          </div>
+        </a>
+ 
+        <div class="contact-item" data-reveal>
+          <div class="contact-item-icon" style="font-size:1.1rem;">&#9679;</div>
+          <div>
+            <div class="contact-item-label">Luogo del torneo</div>
+            <div class="contact-item-value">Campetto di Codemondo</div>
+            <div class="contact-item-desc">Via San Pantaleone — Codemondo, Reggio Emilia</div>
+          </div>
+        </div>
+ 
+        <div class="contact-item" data-reveal>
+          <div class="contact-item-icon" style="font-size:1rem;">&#9632;</div>
+          <div>
+            <div class="contact-item-label">Date</div>
+            <div class="contact-item-value">1 – 2 – 3 Maggio 2026</div>
+            <div class="contact-item-desc">Fascia oraria 18:00 – 01:00. Apertura cancelli ore 17:30.</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="map-col" data-reveal>
+        <div class="map-embed">
+        <!--
+            Mappa Google Maps embed — coordinate esatte da maps.app.goo.gl/7ydMKypHDrGrQP35A
+            Nessun filtro CSS applicato: si vede in modo naturale.
+          -->
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2840.5!2d10.6447!3d44.7012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477fed5b9e3b4f8b%3A0x1!2sVia+San+Pantaleone%2C+Codemondo+RE!5e0!3m2!1sit!2sit!4v1714000000001"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Campetto Code League — Via San Pantaleone, Codemondo">
+          </iframe>
+        </div>
+        <a class="map-btn" href="https://maps.app.goo.gl/BNUPqHzLTocrwm9T7" target="_blank" rel="noopener">
+          Apri in Google Maps
+        </a>
+      </div>
+ 
+      <!-- FAQ -->
+      <div class="faq-col" data-reveal>
+        <h3 class="faq-title">Domande <span style="color:var(--giallo)">frequenti</span></h3>
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question">Posso iscrivermi anche se non sono uno sportivo? <div class="faq-icon">+</div></div>
+            <div class="faq-answer">Assolutamente si. La Code League e aperta a tutti. L'importante e partecipare con spirito di squadra e sportivita.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Come si paga la quota di iscrizione? <div class="faq-icon">+</div></div>
+            <div class="faq-answer">Dopo aver inviato il modulo di iscrizione, sarai ricontattato per le istruzioni di pagamento. Puoi anche contattarci direttamente via Instagram @code.league.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Quando riceveremo il kit sportivo CONI? <div class="faq-icon">+</div></div>
+            <div class="faq-answer">L'integratore sportivo certificato CONI verra consegnato a ogni giocatore al momento della registrazione il giorno del torneo, prima del primo calcio d'inizio.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Posso portare amici e familiari come spettatori? <div class="faq-icon">+</div></div>
+            <div class="faq-answer">Certamente. Il torneo e aperto agli spettatori. Bar e cucina saranno disponibili per tutti i presenti dalle 19:00, e l'acqua fresca e gratuita per l'intera giornata.</div>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+  </section>
+ 
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">CODE <span>LEAGUE</span></div>
+    <ul class="footer-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="regolamento.html">Regolamento</a></li>
+      <li><a href="iscriviti.html">Iscriviti</a></li>
+      <li><a href="#contatti">Contatti</a></li>
+    </ul>
+    <a class="footer-ig" href="https://www.instagram.com/code.league?igsh=MTNlM3hlbG1tZDM4ZA==" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      @code.league
+    </a>
+    <p class="footer-copy">2026 Code League — Torneo di Calcio a 5 · Codemondo, Reggio Emilia</p>
+  </footer>
+ 
+  <script>
+    // Hamburger menu
+    const ham = document.getElementById('hamburger');
+    const mMenu = document.getElementById('mobileMenu');
+    ham.addEventListener('click', () => {
+      ham.classList.toggle('open');
+      mMenu.classList.toggle('open');
+    });
+    mMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      ham.classList.remove('open');
+      mMenu.classList.remove('open');
+    }));
+ 
+    // Scroll reveal
+    const reveals = document.querySelectorAll('[data-reveal]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 70);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => observer.observe(el));
+ 
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-question').addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>
