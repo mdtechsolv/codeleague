@@ -108,26 +108,24 @@
     }
  
     /* Foto di sfondo campetto — caricata da GitHub */
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('https://github.com/mdtechsolv/codeleague/blob/main/campetto.jpg?raw=true');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
+   .hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
     /* Overlay scuro per rendere le scritte leggibili */
-    .hero-bg::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(13,11,20,.72) 0%,
-        rgba(76,29,149,.55) 40%,
-        rgba(13,11,20,.82) 100%
-      );
-    }
+   .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(13,11,20,.72) 0%,
+    rgba(76,29,149,.55) 40%,
+    rgba(13,11,20,.82) 100%
+  );
+}
  
     .hero-grid {
       position: absolute;
@@ -446,7 +444,11 @@
   </div>
  
   <section class="hero">
-    <div class="hero-bg"></div>
+    <video class="hero-bg" autoplay muted loop playsinline>
+  <source src="https://raw.githubusercontent.com/mdtechsolv/codeleague/main/codeleague4.mp4" type="video/mp4">
+</video>
+
+<div class="hero-overlay"></div>
     <div class="hero-grid"></div>
  
     <p class="hero-eyebrow">4a Edizione 2026</p>
