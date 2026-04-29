@@ -30,7 +30,6 @@
       overflow-x: hidden;
     }
  
-    /* Noise overlay */
     body::before {
       content: '';
       position: fixed;
@@ -41,7 +40,6 @@
       opacity: .35;
     }
  
-    /* ── NAVBAR ── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -80,7 +78,6 @@
     }
     .nav-cta:hover { background: var(--giallo-chiaro); transform: scale(1.04); }
  
-    /* Hamburger */
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
     .hamburger span { display: block; width: 26px; height: 2px; background: var(--bianco); transition: .3s; }
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -98,7 +95,6 @@
     }
     .mobile-menu a:hover { color: var(--giallo); }
  
-    /* ── HERO ── */
     .hero {
       position: relative;
       min-height: 100svh;
@@ -111,29 +107,28 @@
       padding: 100px 1.5rem 5rem;
     }
  
-    /* Immagine di sfondo campetto */
+    /* Foto di sfondo campetto — caricata da GitHub */
     .hero-bg {
       position: absolute;
       inset: 0;
-      background-image: url('https://raw.githubusercontent.com/davideiacuzio/code-league/main/campetto.jpg');
+      background-image: url('https://raw.githubusercontent.com/davideiacuzio/code-league/main/campetto.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
     }
-    /* Overlay sfumato viola scuro sopra la foto */
+    /* Overlay scuro per rendere le scritte leggibili */
     .hero-bg::after {
       content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(
         180deg,
-        rgba(13,11,20,.75) 0%,
-        rgba(76,29,149,.5) 40%,
-        rgba(13,11,20,.85) 100%
+        rgba(13,11,20,.72) 0%,
+        rgba(76,29,149,.55) 40%,
+        rgba(13,11,20,.82) 100%
       );
     }
  
-    /* Griglia decorativa sopra l'overlay */
     .hero-grid {
       position: absolute;
       inset: 0;
@@ -214,7 +209,6 @@
     }
     .btn-secondary:hover { border-color: var(--giallo); color: var(--giallo); transform: translateY(-2px); }
  
-    /* Scroll indicator */
     .scroll-hint {
       position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: .5rem;
@@ -233,7 +227,6 @@
       100% { transform: scaleY(0); transform-origin: bottom; }
     }
  
-    /* ── SEZIONE GENERICA ── */
     .section { padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem); max-width: 1200px; margin: 0 auto; }
  
     .section-label {
@@ -249,7 +242,6 @@
       color: rgba(245,240,232,.55); max-width: 560px; line-height: 1.85; font-size: 1.05rem;
     }
  
-    /* ── INFO CARDS ── */
     .info-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
       gap: 1px; background: rgba(124,58,237,.12);
@@ -275,7 +267,6 @@
     .card-value.purple { color: var(--viola-chiaro); }
     .card-sub { font-size: .82rem; color: rgba(245,240,232,.38); margin-top: .35rem; line-height: 1.5; }
  
-    /* ── PREMI ── */
     .prizes-section { background: var(--grigio); border-top: 1px solid rgba(124,58,237,.15); border-bottom: 1px solid rgba(124,58,237,.15); }
     .prizes-inner { max-width: 1200px; margin: 0 auto; padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem); }
     .prizes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
@@ -295,7 +286,6 @@
     .prize-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: .04em; color: var(--giallo); }
     .prize-desc { font-family: 'Barlow Condensed', sans-serif; font-size: .85rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(245,240,232,.4); margin-top: .4rem; }
  
-    /* ── FOOD & BAR ── */
     .food-section { max-width: 1200px; margin: 0 auto; padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 6vw, 5rem); border-bottom: 1px solid rgba(124,58,237,.12); }
     .food-list { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
     .food-tag {
@@ -312,7 +302,6 @@
     .food-note::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--viola-chiaro); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
  
-    /* ── CONTATTI (inline nella homepage) ── */
     #contatti {
       background: var(--grigio);
       border-top: 1px solid rgba(124,58,237,.15);
@@ -344,28 +333,17 @@
     .contact-item-value { font-weight: 600; font-size: .97rem; color: var(--bianco); margin-bottom: .2rem; }
     .contact-item-desc { font-size: .82rem; color: rgba(245,240,232,.4); line-height: 1.5; }
  
-    .ig-link {
-      text-decoration: none; color: inherit;
-      border-color: rgba(168,85,247,.25);
-    }
+    .ig-link { text-decoration: none; color: inherit; border-color: rgba(168,85,247,.25); }
     .ig-link:hover { border-color: rgba(168,85,247,.5) !important; }
     .ig-link .contact-item-value { color: var(--viola-chiaro); }
  
     .map-col { display: flex; flex-direction: column; gap: 1.2rem; }
-    /* ── MAPPA — nessun filtro colore, bordo viola sottile ── */
     .map-embed {
-      width: 100%;
-      aspect-ratio: 4/3;
+      width: 100%; aspect-ratio: 4/3;
       border: 1px solid rgba(124,58,237,.3);
-      overflow: hidden;
-      border-radius: 2px;
+      overflow: hidden; border-radius: 2px;
     }
-    .map-embed iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
+    .map-embed iframe { width: 100%; height: 100%; border: none; display: block; }
  
     .map-btn {
       display: flex; align-items: center; justify-content: center; gap: .75rem;
@@ -376,7 +354,6 @@
     }
     .map-btn:hover { background: rgba(124,58,237,.1); border-color: var(--viola-chiaro); }
  
-    /* FAQ nella sezione contatti */
     .faq-col { grid-column: 1 / -1; }
     .faq-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: .04em; margin-bottom: 1.5rem; }
     .faq-list { display: flex; flex-direction: column; }
@@ -389,7 +366,6 @@
     .faq-answer { font-size: .92rem; color: rgba(245,240,232,.5); line-height: 1.8; max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s ease; }
     .faq-item.open .faq-answer { max-height: 200px; padding: 0 0 1.3rem; }
  
-    /* ── CTA BANNER ── */
     .cta-banner {
       background: var(--viola);
       padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
@@ -412,7 +388,6 @@
     }
     .btn-white:hover { background: var(--giallo); color: var(--nero); transform: translateY(-2px); }
  
-    /* ── FOOTER ── */
     footer {
       background: #07060d;
       border-top: 1px solid rgba(245,240,232,.05);
@@ -429,11 +404,9 @@
     .footer-ig svg { width: 17px; height: 17px; fill: currentColor; }
     .footer-copy { width: 100%; text-align: center; font-size: .73rem; color: rgba(245,240,232,.18); margin-top: 1rem; letter-spacing: .05em; }
  
-    /* ── SCROLL REVEAL ── */
     [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
     [data-reveal].visible { opacity: 1; transform: none; }
  
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .nav-links, .nav-cta { display: none; }
       .hamburger { display: flex; }
@@ -451,7 +424,6 @@
 </head>
 <body>
  
-  <!-- NAVBAR -->
   <nav>
     <a class="nav-logo" href="index.html">CODE <span>LEAGUE</span></a>
     <ul class="nav-links">
@@ -466,15 +438,13 @@
     </button>
   </nav>
  
-  <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="regolamento.html">Regolamento</a>
-    <li><a href="vincitori.html">Vincitori</a></li>
     <a href="iscriviti.html">Iscriviti</a>
+    <a href="vincitori.html">Vincitori</a>
     <a href="#contatti">Contatti</a>
   </div>
  
-  <!-- HERO -->
   <section class="hero">
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
@@ -505,13 +475,12 @@
     </div>
   </section>
  
-  <!-- INFO TORNEO -->
   <div style="background: var(--nero);">
     <div class="section">
       <p class="section-label" data-reveal>Il torneo</p>
       <h2 class="section-title" data-reveal>Tre giorni.<br><span style="color:var(--giallo)">Una sola vetta.</span></h2>
       <p class="section-body" data-reveal>
-        La Code League e il torneo di calcio a 5 pensato per chiunque abbia voglia di competere, divertirsi e vivere tre serate indimenticabili al campetto di Codemondo. Per sportivi e non.
+        La Code League è il torneo di calcio a 5 pensato per chiunque abbia voglia di competere, divertirsi e vivere tre serate indimenticabili al campetto di Codemondo. Per sportivi e non.
       </p>
  
       <div class="info-grid" data-reveal>
@@ -549,7 +518,6 @@
     </div>
   </div>
  
-  <!-- PREMI -->
   <div class="prizes-section">
     <div class="prizes-inner">
       <p class="section-label" data-reveal>Montepremi</p>
@@ -581,12 +549,11 @@
     </div>
   </div>
  
-  <!-- FOOD & BAR -->
   <div class="food-section">
     <p class="section-label" data-reveal>Food and Bar</p>
     <h2 class="section-title" data-reveal>Dalle 19:00 si <span style="color:var(--giallo)">mangia.</span></h2>
     <p class="section-body" data-reveal>
-      Durante tutte le giornate del torneo il servizio cucina e bar sara aperto per tutti i presenti.
+      Durante tutte le giornate del torneo il servizio cucina e bar sarà aperto per tutti i presenti.
     </p>
     <div class="food-list" data-reveal>
       <span class="food-tag">Panino con la salsiccia</span>
@@ -598,14 +565,12 @@
     <p class="food-note" data-reveal>Acqua fresca gratis per tutti, per tutta la durata del torneo</p>
   </div>
  
-  <!-- CTA BANNER -->
   <div class="cta-banner">
     <h2>Porta la tua squadra.<br><span>Solo 16 posti.</span></h2>
     <p>Non fartelo sfuggire.</p>
     <a class="btn-white" href="iscriviti.html">Iscriviti ora — 200 Euro</a>
   </div>
  
-  <!-- CONTATTI (sezione inline) -->
   <section id="contatti">
     <div class="contatti-inner">
  
@@ -645,15 +610,9 @@
  
       <div class="map-col" data-reveal>
         <div class="map-embed">
-        <!--
-            Mappa Google Maps embed — coordinate esatte da maps.app.goo.gl/7ydMKypHDrGrQP35A
-            Nessun filtro CSS applicato: si vede in modo naturale.
-          -->
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2840.5!2d10.6447!3d44.7012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477fed5b9e3b4f8b%3A0x1!2sVia+San+Pantaleone%2C+Codemondo+RE!5e0!3m2!1sit!2sit!4v1714000000001"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
             title="Campetto Code League — Via San Pantaleone, Codemondo">
           </iframe>
         </div>
@@ -662,13 +621,12 @@
         </a>
       </div>
  
-      <!-- FAQ -->
       <div class="faq-col" data-reveal>
         <h3 class="faq-title">Domande <span style="color:var(--giallo)">frequenti</span></h3>
         <div class="faq-list">
           <div class="faq-item">
             <div class="faq-question">Posso iscrivermi anche se non sono uno sportivo? <div class="faq-icon">+</div></div>
-            <div class="faq-answer">Assolutamente si. La Code League e aperta a tutti. L'importante e partecipare con spirito di squadra e sportivita.</div>
+            <div class="faq-answer">Assolutamente sì. La Code League è aperta a tutti. L'importante è partecipare con spirito di squadra e sportività.</div>
           </div>
           <div class="faq-item">
             <div class="faq-question">Come si paga la quota di iscrizione? <div class="faq-icon">+</div></div>
@@ -676,11 +634,11 @@
           </div>
           <div class="faq-item">
             <div class="faq-question">Quando riceveremo il kit sportivo CONI? <div class="faq-icon">+</div></div>
-            <div class="faq-answer">L'integratore sportivo certificato CONI verra consegnato a ogni giocatore al momento della registrazione il giorno del torneo, prima del primo calcio d'inizio.</div>
+            <div class="faq-answer">L'integratore sportivo certificato CONI verrà consegnato a ogni giocatore al momento della registrazione il giorno del torneo, prima del primo calcio d'inizio.</div>
           </div>
           <div class="faq-item">
             <div class="faq-question">Posso portare amici e familiari come spettatori? <div class="faq-icon">+</div></div>
-            <div class="faq-answer">Certamente. Il torneo e aperto agli spettatori. Bar e cucina saranno disponibili per tutti i presenti dalle 19:00, e l'acqua fresca e gratuita per l'intera giornata.</div>
+            <div class="faq-answer">Certamente. Il torneo è aperto agli spettatori. Bar e cucina saranno disponibili per tutti i presenti dalle 19:00, e l'acqua fresca è gratuita per l'intera giornata.</div>
           </div>
         </div>
       </div>
@@ -688,7 +646,6 @@
     </div>
   </section>
  
-  <!-- FOOTER -->
   <footer>
     <div class="footer-logo">CODE <span>LEAGUE</span></div>
     <ul class="footer-links">
@@ -705,7 +662,6 @@
   </footer>
  
   <script>
-    // Hamburger menu
     const ham = document.getElementById('hamburger');
     const mMenu = document.getElementById('mobileMenu');
     ham.addEventListener('click', () => {
@@ -717,7 +673,6 @@
       mMenu.classList.remove('open');
     }));
  
-    // Scroll reveal
     const reveals = document.querySelectorAll('[data-reveal]');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e, i) => {
@@ -729,7 +684,6 @@
     }, { threshold: 0.08 });
     reveals.forEach(el => observer.observe(el));
  
-    // FAQ accordion
     document.querySelectorAll('.faq-item').forEach(item => {
       item.querySelector('.faq-question').addEventListener('click', () => {
         const isOpen = item.classList.contains('open');
